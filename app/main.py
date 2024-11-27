@@ -39,22 +39,98 @@ def predict_image_class(model, image_path, class_indices):
     predicted_class_name = class_indices[str(predicted_class_index)]
     return predicted_class_name
 
+# Custom CSS
+css = """
+<style>
+    .stApp {
+        background-color:#F4F0B9; /* Light yellow background */
+    }
+    /* Overall body styling */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #F4F0B9; /* Background color */
+        color: #4A4A30;
+    }
 
-# Streamlit App
+    /* Header styling */
+    .header {
+        text-align: left;
+        padding: 20px;
+        background-color: #424226;
+        color: #F8F8E3;
+    }
+
+    /* Title styling */
+    h1 {
+        font-size: 7rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+        font-family: 'Playfair Display', serif;
+    }
+
+    /* Upload section styling */
+    .upload-section {
+        background-color: #f7e2a3; /* Light background color for the upload section */
+        color: #4A4A30;
+        text-align: center;
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    /* Upload button styling */
+    .upload-section button {
+        background-color: #7C75BA;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 1.2rem;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+
+    /* Link styling */
+    a {
+        color: #F8F8E3;
+        text-decoration: none;
+    }
+
+    /* Styling for prediction result */
+    .result {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #4A4A30;
+    }
+</style>
+"""
+
+# Inject CSS into the app
+st.markdown(css, unsafe_allow_html=True)
+
+# Streamlit Title
 st.title('Plant Disease Classifier')
 
-uploaded_image = st.file_uploader("Upload an image...", type=["jpg", "jpeg", "png"])
+# Define layout with two columns
+col1, col2 = st.columns([1, 1])  # Adjust the proportions of the columns if needed
 
-if uploaded_image is not None:
-    image = Image.open(uploaded_image)
-    col1, col2 = st.columns(2)
+# Left column: Upload section
+with col1:
+    st.markdown('<div class="upload-section"><h2>Upload a Diseased Plant Image</h2></div>', unsafe_allow_html=True)
+    uploaded_image = st.file_uploader("Upload an image...", type=["jpg", "jpeg", "png"])
 
-    with col1:
-        resized_img = image.resize((150, 150))
-        st.image(resized_img)
-
-    with col2:
+    # Display a prediction button if an image is uploaded
+    if uploaded_image is not None:
         if st.button('Classify'):
-            # Preprocess the uploaded image and predict the class
+            # Placeholder for model prediction (example)
             prediction = predict_image_class(model, uploaded_image, class_indices)
-            st.success(f'Prediction: {str(prediction)}')
+            st.success(f'Prediction: {str(prediction)}')  
+            st.markdown(f'<div class="result">Prediction: {prediction}</div>', unsafe_allow_html=True)
+
+# Right column: Display a static or uploaded image
+with col2:
+    if uploaded_image is not None:
+        image = Image.open(uploaded_image)
+        st.image(image, caption="Uploaded Image", use_column_width=True)
+    else:
+        st.image("https://image.deondernemer.nl/239479096/feature-crop/1200/630/frank-about-tea-van-de-plantage-rechtstreeks-in-je-brievenbus", caption="Example Image", use_column_width=True)  # Replace with your default image path
+
